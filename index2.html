@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON and the Web</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+</head>
+
+<body>
+
+    <h1>JSON and the Web</h1>
+
+    <div>
+        <button id="citButton">CIT Majors</button>
+        <button id="busButton">Business Majors</button>
+    </div>
+
+    <table id="studentsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Major</th>
+                <th>Midterm Score</th>
+                <th>Final Exam Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script id="students-template" type="text/x-handlebars-template">
+        {{#each this}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{major}}</td>
+            <td>{{midterm}}</td>
+            <td>{{final}}</td>
+        </tr>
+        {{/each}}
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $.getJSON('cit5students.json', function (data) {
+                displayTable(data);
+
+                $('#citButton').click(function () {
+                    var citStudents = data.filter(student => student.major === 'CIT');
+                    displayTable(citStudents);
+                });
+
+                $('#busButton').click(function () {
+                    var busStudents = data.filter(student => student.major === 'BUS');
+                    displayTable(busStudents);
+                });
+            });
+
+            function displayTable(students) {
+                var source = $('#students-template').html();
+                var template = Handlebars.compile(source);
+                var html = template(students);
+                $('#studentsTable tbody').html(html);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
